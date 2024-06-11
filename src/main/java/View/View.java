@@ -82,11 +82,13 @@ public class View extends JFrame  {
             public void playing(MediaPlayer mediaPlayer) {
                 Timer timer = new Timer();
 
-                // Schedule the task to run every 1 millisecond (**NOT RECOMMENDED**)
+
                 timer.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
-                        UpdateProgressBar(); // Execute the method
+                        UpdateProgressBar();
+                        UpdateVolumen();
+
                     }
                 }, 0, 1);
 
@@ -220,6 +222,13 @@ public class View extends JFrame  {
 
     public JSlider getVolumenSlider () {
         return Volumen;
+    }
+
+    public void UpdateVolumen () {
+        int sliderValue =  mediaPlayerComponent.mediaPlayer().audio().volume();
+        Volumen.setValue(sliderValue);
+        Volumen.revalidate();
+        Volumen.repaint();
     }
 
     public void updateSliderValue() {

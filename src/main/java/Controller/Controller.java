@@ -150,6 +150,9 @@ public class Controller implements WindowListener, ActionListener, ChangeListene
             view.mediaPlayerComponent.mediaPlayer().controls().skipTime(-1000); // Rebobinar 10 segundos
         } else if (e.getKeyCode() == KeyEvent.VK_UP) {
             view.mediaPlayerComponent.mediaPlayer().audio().setVolume(view.mediaPlayerComponent.mediaPlayer().audio().volume() + 5);
+            view.updateSliderValue();
+            view.getVolumen().revalidate();
+            view.getVolumen().repaint();
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             view.mediaPlayerComponent.mediaPlayer().audio().setVolume(view.mediaPlayerComponent.mediaPlayer().audio().volume() - 5);
         } else if (e.getKeyCode() == KeyEvent.VK_R) {
