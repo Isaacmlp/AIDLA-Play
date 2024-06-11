@@ -66,7 +66,7 @@ Nota: Sera corregido en proximas versiones.
 
 * [IntelliJ IDEA Community Edition](https://www.jetbrains.com/idea/download/?section=windows) - entorno de desarrollo integrado para el desarrollo de programas informáticos
 * [Maven](https://maven.apache.org/) - Manejador de dependencias
-* [VLCJ](https://www.capricasoftware.co.uk/projects/vlcj) - Dependecia de VLC Utilizada para la Multimedia
+* [VLCJ](https://www.capricasoftware.co.uk/projects/vlcj) - Framework de VLC Utilizada para la Multimedia
 * [MVC](https://es.wikipedia.org/wiki/Modelo–vista–controlador) - Patron de diseño
 
 
