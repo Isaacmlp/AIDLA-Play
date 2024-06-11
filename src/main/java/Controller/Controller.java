@@ -3,16 +3,18 @@ package Controller;
 import View.View;
 import Model.Model;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 
-public class Controller implements WindowListener, ActionListener, ChangeListener {
+public class Controller implements WindowListener, ActionListener, ChangeListener , MouseListener {
     View view;
     Model model;
 
@@ -70,18 +72,64 @@ public class Controller implements WindowListener, ActionListener, ChangeListene
        } else if (e.getSource() == view.getPauseButton()) {
            view.mediaPlayerComponent.mediaPlayer().controls().pause(); // Pausar
        } else if (e.getSource() == view.getSkipButton()) {
-           view.mediaPlayerComponent.mediaPlayer().controls().skipTime(-1000); // Rebobinar 10 segundos
-       } else if (e.getSource() == view.getRewindButton()) {
            view.mediaPlayerComponent.mediaPlayer().controls().skipTime(1000); // Saltar 10 segundos
-       } else if (e.getSource() == view.getItem()) {
-          view.fileChooser.showOpenDialog(view);
+       } else if (e.getSource() == view.getRewindButton()) {
+           view.mediaPlayerComponent.mediaPlayer().controls().skipTime(-1000); // Rebobinar 10 segundos
+       } else if (e.getSource() == view.Item) {
+           view.OpenMusic();
+       } else if ( e.getSource() == view.Repeat) {
 
-           view.mediaPlayerComponent.mediaPlayer().media().play(String.valueOf(view.fileChooser.getSelectedFile()));
+           if (view.Repeat.getText() == "Repeat On"){
+               view.NoRepeat();
+           } else {
+               view.Repeat.setText("Repeat On");
+               view.mediaPlayerComponent.mediaPlayer().controls().setRepeat(true);
+           }
+
+
        }
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        view.audioPlayerComponent.mediaPlayer().audio().setVolume(view.getVolumenSlider().getValue());
+        if (e.getSource() == view.getVolumen() ) {
+            view.audioPlayerComponent.mediaPlayer().audio().setVolume(view.getVolumenSlider().getValue());
+        } else if (e.getSource() == view.ProgressBar) {
+            view.mediaPlayerComponent.mediaPlayer().controls().setPosition(view.ProgressBar.getValue());
+            view.ProgressBar.revalidate();
+            view.ProgressBar.repaint();
+
+        }
     }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getSource() == view.Item) {
+            view.fileChooser.showOpenDialog(view.fileChooser);
+
+            view.mediaPlayerComponent.mediaPlayer().media().play(view.fileChooser.getSelectedFile().getAbsolutePath());
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+
 }
