@@ -18,6 +18,7 @@ import uk.co.caprica.vlcj.factory.AudioApi.*;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.AudioApi;
 import uk.co.caprica.vlcj.player.base.VideoApi.*;
+import uk.co.caprica.vlcj.player.embedded.fullscreen.adaptive.AdaptiveFullScreenStrategy;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -30,6 +31,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
+import static java.awt.SystemColor.window;
 
 
 public class View extends JFrame  {
@@ -76,17 +79,25 @@ public class View extends JFrame  {
 
         audioPlayerComponent = new AudioPlayerComponent();
 
-        mediaPlayerComponent = new EmbeddedMediaPlayerComponent() {
+        mediaPlayerComponent = new EmbeddedMediaPlayerComponent(
+                null,
+                null,
+                new AdaptiveFullScreenStrategy(this),
+                null,
+                null
+        ) {
 
             @Override
             public void playing(MediaPlayer mediaPlayer) {
                 Timer timer = new Timer();
 
 
+
                 timer.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
                         UpdateProgressBar();
+                        mediaPlayerComponent.mediaPlayer().audio().setVolume(50);
                         UpdateVolumen();
 
                     }
@@ -154,7 +165,7 @@ public class View extends JFrame  {
         PlayButton = new JButton(ReescalarImagen("PlayIcon","C:\\Users\\Isaac León\\IdeaProjects\\AIDLA Play\\src\\main\\Img\\Play.png"));
         PauseButton = new JButton(ReescalarImagen("Pause","C:\\Users\\Isaac León\\IdeaProjects\\AIDLA Play\\src\\main\\Img\\circulo-de-pausa.png"));
         SkipButton = new JButton(ReescalarImagen("Skip","C:\\Users\\Isaac León\\IdeaProjects\\AIDLA Play\\src\\main\\Img\\tiempo-adelante-diez.png"));
-        RewindButton = new JButton(ReescalarImagen("Rewind","C:\\Users\\Isaac León\\IdeaProjects\\AIDLA Play\\src\\main\\Img\\circulo-del-boton-de-rebobinar.png"));
+        RewindButton = new JButton(ReescalarImagen("Rewind","C:\\Users\\Isaac León\\IdeaProjects\\AIDLA Play\\src\\main\\Img\\girar-hacia-atras.png"));
         Repeat = new JButton(ReescalarImagen("Repeat","C:\\Users\\Isaac León\\IdeaProjects\\AIDLA Play\\src\\main\\Img\\flechas-repetir-1.png"));
 
         Volumen = new JSlider(0,100,50);

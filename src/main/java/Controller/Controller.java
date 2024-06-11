@@ -164,6 +164,10 @@ public class Controller implements WindowListener, ActionListener, ChangeListene
             }
         } else if ( e.getKeyCode() == KeyEvent.VK_P && e.isControlDown() ) {
             view.OpenMusic();
+        } else if ( e.getKeyCode() == KeyEvent.VK_F11) {
+            view.mediaPlayerComponent.mediaPlayer().fullScreen().set(true);
+        } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            view.mediaPlayerComponent.mediaPlayer().fullScreen().set(false);
         }
     }
         @Override
