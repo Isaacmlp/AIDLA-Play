@@ -168,6 +168,14 @@ public class View extends JFrame  {
         Item.addActionListener(control);
         Repeat.addActionListener(control);
 
+        PlayButton.setFocusable(false);
+        PauseButton.setFocusable(false);
+        SkipButton.setFocusable(false);
+        RewindButton.setFocusable(false);
+        Volumen.setFocusable(false);
+        Item.setFocusable(false);
+        Repeat.setFocusable(false);
+
 
         ControlsPanel = new JPanel();
 
@@ -178,11 +186,12 @@ public class View extends JFrame  {
         ControlsPanel.add(SkipButton);
         ControlsPanel.add(Repeat);
         ControlsPanel.add(Volumen);
-        ControlsPanel.add(ProgressBar);
+
 
         panel.add(ControlsPanel,BorderLayout.SOUTH);
         setContentPane(panel);
         mediaPlayerComponent.mediaPlayer().audio().setVolume(50);
+        requestFocus();
         setVisible(true);
 
 

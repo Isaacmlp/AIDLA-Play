@@ -14,17 +14,20 @@ import java.io.File;
 import java.io.IOException;
 
 
-public class Controller implements WindowListener, ActionListener, ChangeListener , MouseListener {
+public class Controller implements WindowListener, ActionListener, ChangeListener , MouseListener, KeyListener {
     View view;
     Model model;
 
-    public Controller (View view) {
+    public Controller(View view) {
         this.view = view;
         this.model = new Model();
+        view.addKeyListener(this);
+        view.setFocusable(true);
+
     }
 
 
-        /* WindowsListener */
+    /* WindowsListener */
 
     @Override
     public void windowOpened(WindowEvent e) {
@@ -62,37 +65,37 @@ public class Controller implements WindowListener, ActionListener, ChangeListene
 
     }
 
-        /* ActionListener*/
+    /* ActionListener*/
 
     @Override
     public void actionPerformed(ActionEvent e) {
 
-       if (e.getSource() == view.getPlayButton()) {
-           view.mediaPlayerComponent.mediaPlayer().controls().play(); // Reproducir
-       } else if (e.getSource() == view.getPauseButton()) {
-           view.mediaPlayerComponent.mediaPlayer().controls().pause(); // Pausar
-       } else if (e.getSource() == view.getSkipButton()) {
-           view.mediaPlayerComponent.mediaPlayer().controls().skipTime(1000); // Saltar 10 segundos
-       } else if (e.getSource() == view.getRewindButton()) {
-           view.mediaPlayerComponent.mediaPlayer().controls().skipTime(-1000); // Rebobinar 10 segundos
-       } else if (e.getSource() == view.Item) {
-           view.OpenMusic();
-       } else if ( e.getSource() == view.Repeat) {
+        if (e.getSource() == view.getPlayButton()) {
+            view.mediaPlayerComponent.mediaPlayer().controls().play(); // Reproducir
+        } else if (e.getSource() == view.getPauseButton()) {
+            view.mediaPlayerComponent.mediaPlayer().controls().pause(); // Pausar
+        } else if (e.getSource() == view.getSkipButton()) {
+            view.mediaPlayerComponent.mediaPlayer().controls().skipTime(1000); // Saltar 10 segundos
+        } else if (e.getSource() == view.getRewindButton()) {
+            view.mediaPlayerComponent.mediaPlayer().controls().skipTime(-1000); // Rebobinar 10 segundos
+        } else if (e.getSource() == view.Item) {
+            view.OpenMusic();
+        } else if (e.getSource() == view.Repeat) {
 
-           if (view.Repeat.getText() == "Repeat On"){
-               view.NoRepeat();
-           } else {
-               view.Repeat.setText("Repeat On");
-               view.mediaPlayerComponent.mediaPlayer().controls().setRepeat(true);
-           }
+            if (view.Repeat.getText() == "Repeat On") {
+                view.NoRepeat();
+            } else {
+                view.Repeat.setText("Repeat On");
+                view.mediaPlayerComponent.mediaPlayer().controls().setRepeat(true);
+            }
 
 
-       }
+        }
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        if (e.getSource() == view.getVolumen() ) {
+        if (e.getSource() == view.getVolumen()) {
             view.audioPlayerComponent.mediaPlayer().audio().setVolume(view.getVolumenSlider().getValue());
         } else if (e.getSource() == view.ProgressBar) {
             view.mediaPlayerComponent.mediaPlayer().controls().setPosition(view.ProgressBar.getValue());
@@ -132,4 +135,37 @@ public class Controller implements WindowListener, ActionListener, ChangeListene
     }
 
 
-}
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            view.mediaPlayerComponent.mediaPlayer().controls().pause(); // Pausar
+        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            view.mediaPlayerComponent.mediaPlayer().controls().skipTime(1000); // Saltar 10 segundos
+        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            view.mediaPlayerComponent.mediaPlayer().controls().skipTime(-1000); // Rebobinar 10 segundos
+        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+            view.mediaPlayerComponent.mediaPlayer().audio().setVolume(view.mediaPlayerComponent.mediaPlayer().audio().volume() + 5);
+        } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            view.mediaPlayerComponent.mediaPlayer().audio().setVolume(view.mediaPlayerComponent.mediaPlayer().audio().volume() - 5);
+        } else if (e.getKeyCode() == KeyEvent.VK_R) {
+            if (view.Repeat.getText() == "Repeat On"){
+                view.NoRepeat();
+            } else {
+                view.Repeat.setText("Repeat On");
+                view.mediaPlayerComponent.mediaPlayer().controls().setRepeat(true);
+            }
+        } else if ( e.getKeyCode() == KeyEvent.VK_P && e.isControlDown() ) {
+            view.OpenMusic();
+        }
+    }
+        @Override
+        public void keyReleased (KeyEvent e){
+
+        }
+    }
+
