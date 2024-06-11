@@ -1,11 +1,14 @@
 package View;
 
+
 import Controller.Controller;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
 import uk.co.caprica.vlcj.binding.lib.LibVlc;
 import uk.co.caprica.vlcj.binding.support.runtime.RuntimeUtil;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.media.Media;
+import uk.co.caprica.vlcj.media.MediaFactory;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.component.AudioPlayerComponent;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaListPlayerComponent;
@@ -16,11 +19,17 @@ import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.AudioApi;
 import uk.co.caprica.vlcj.player.base.VideoApi.*;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 
 
 public class View extends JFrame  {
@@ -36,6 +45,7 @@ public class View extends JFrame  {
     public JButton SkipButton ;
     public JButton RewindButton;
     public JButton PlayButton;
+    public JButton Repeat;
 
         /* Sliders*/
 
@@ -57,21 +67,39 @@ public class View extends JFrame  {
     public AudioPlayerComponent audioPlayerComponent;
 
     Controller control;
-
+    View vista;
 
     public View () {
         fileChooser = new JFileChooser();
+
+
+
         audioPlayerComponent = new AudioPlayerComponent();
 
         mediaPlayerComponent = new EmbeddedMediaPlayerComponent() {
 
             @Override
             public void playing(MediaPlayer mediaPlayer) {
-                ProgressBar.setValue((int) mediaPlayerComponent.mediaPlayer().status().position());
+                Timer timer = new Timer();
+
+                // Schedule the task to run every 1 millisecond (**NOT RECOMMENDED**)
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        UpdateProgressBar(); // Execute the method
+                    }
+                }, 0, 1);
+
+
             }
 
             @Override
             public void finished(MediaPlayer mediaPlayer) {
+                mediaPlayer.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                    }
+                });
             }
 
             @Override
@@ -88,20 +116,22 @@ public class View extends JFrame  {
                     }
                 });
             }
+
         };
         Menu();
         Contenido();
+        OpenMusic();
     }
 
     private void Menu() {
         Barra = new JMenuBar();
         Item = new JMenuItem("Open File");
         Menu = new JMenu("File");
+
         Barra.add(Menu);
         Menu.add(Item);
         setJMenuBar(Barra);
 
-        Item.addActionListener(control);
 
     }
 
@@ -109,7 +139,7 @@ public class View extends JFrame  {
         setTitle("AIDLA Play");
         setSize(1024,700);
         setLocationRelativeTo(null);
-        setResizable(false);
+        setResizable(true);
         setDefaultCloseOperation(3);
 
         panel = new JPanel();
@@ -118,10 +148,13 @@ public class View extends JFrame  {
 
         Controller control = new Controller(this); //Instancia del Controlador
 
-        PlayButton = new JButton("Play");
-        PauseButton = new JButton("Pause");
-        SkipButton = new JButton("Skip");
-        RewindButton = new JButton("Rewind");
+
+        PlayButton = new JButton(ReescalarImagen("PlayIcon","C:\\Users\\Isaac León\\IdeaProjects\\AIDLA Play\\src\\main\\Img\\Play.png"));
+        PauseButton = new JButton(ReescalarImagen("Pause","C:\\Users\\Isaac León\\IdeaProjects\\AIDLA Play\\src\\main\\Img\\circulo-de-pausa.png"));
+        SkipButton = new JButton(ReescalarImagen("Skip","C:\\Users\\Isaac León\\IdeaProjects\\AIDLA Play\\src\\main\\Img\\tiempo-adelante-diez.png"));
+        RewindButton = new JButton(ReescalarImagen("Rewind","C:\\Users\\Isaac León\\IdeaProjects\\AIDLA Play\\src\\main\\Img\\circulo-del-boton-de-rebobinar.png"));
+        Repeat = new JButton(ReescalarImagen("Repeat","C:\\Users\\Isaac León\\IdeaProjects\\AIDLA Play\\src\\main\\Img\\flechas-repetir-1.png"));
+
         Volumen = new JSlider(0,100,50);
         ProgressBar = new JSlider();
 
@@ -132,6 +165,9 @@ public class View extends JFrame  {
         SkipButton.addActionListener(control);
         RewindButton.addActionListener(control);
         Volumen.addChangeListener(control); // Conectar el slider al controlador
+        Item.addActionListener(control);
+        Repeat.addActionListener(control);
+
 
         ControlsPanel = new JPanel();
 
@@ -140,14 +176,15 @@ public class View extends JFrame  {
         ControlsPanel.add(PauseButton);
         ControlsPanel.add(RewindButton);
         ControlsPanel.add(SkipButton);
+        ControlsPanel.add(Repeat);
         ControlsPanel.add(Volumen);
         ControlsPanel.add(ProgressBar);
 
         panel.add(ControlsPanel,BorderLayout.SOUTH);
         setContentPane(panel);
+        mediaPlayerComponent.mediaPlayer().audio().setVolume(50);
         setVisible(true);
-        mediaPlayerComponent.mediaPlayer().media().play("C:\\Program Files\\Image-Line\\FL Studio 20\\Data\\Patches\\Packs\\Sacler Packs\\FREE GUITAR SAMPLE PACK\\80 Fm.wav");
-        mediaPlayerComponent.mediaPlayer().status().position();
+
 
     }
 
@@ -177,7 +214,7 @@ public class View extends JFrame  {
     }
 
     public void updateSliderValue() {
-        float position = mediaPlayerComponent.mediaPlayer().media().info().duration();
+        float position = mediaPlayerComponent.mediaPlayer().status().position();
         int sliderValue = (int) (position * 100);
         ProgressBar.setValue(sliderValue);
     }
@@ -187,6 +224,54 @@ public class View extends JFrame  {
         return Item;
     }
 
+    public JSlider getVolumen () {
+        return Volumen;
+    }
+
+    public JSlider getProgressBar () {
+        return ProgressBar;
+    }
+
+    public void NextMusic () {
+            dispose();
+            vista = new View();
+    }
+
+    public void OpenMusic () {
+        fileChooser.showOpenDialog(fileChooser);
+        mediaPlayerComponent.mediaPlayer().media().play(fileChooser.getSelectedFile().getAbsolutePath());
+    }
+
+    /* Reescalar Iconos e Imagenes */
+
+    public ImageIcon ReescalarImagen(String nombreicono, String Ruta){
+        try {
+            File file = new File(Ruta);
+            BufferedImage originalImage = ImageIO.read(file);
+
+            int newWidth = 20; // nuevo ancho deseado
+            int newHeight = 20; // nuevo alto deseado
+
+            Image scaledImage = originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+
+            return new ImageIcon(scaledImage);
+
+            // Ahora puedes usar el ImageIcon en tu GUI
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ImageIcon();
+    }
 
 
+    public void UpdateProgressBar() {
+        updateSliderValue();
+        ProgressBar.revalidate();
+        ProgressBar.repaint();
+    }
+
+    public void NoRepeat() {
+        Repeat.setText("");
+        mediaPlayerComponent.mediaPlayer().controls().setRepeat(false);
+    }
 }
