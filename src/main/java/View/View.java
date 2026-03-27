@@ -97,7 +97,6 @@ public class View extends JFrame  {
                     @Override
                     public void run() {
                         UpdateProgressBar();
-                        mediaPlayerComponent.mediaPlayer().audio().setVolume(50);
                         UpdateVolumen();
 
                     }
@@ -187,7 +186,7 @@ public class View extends JFrame  {
         RewindButton.setFocusable(false);
         Volumen.setFocusable(false);
         Item.setFocusable(false);
-        Repeat.setFocusable(false);
+        mediaPlayerComponent.setFocusable(false);
 
 
         ControlsPanel = new JPanel();
